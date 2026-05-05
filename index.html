@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DP3 — Design Process</title>
+<title>DP3 — Raised in Illusion</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg:       #0D0B1A;
@@ -23,942 +23,1332 @@
     --accent:   #C084FC;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; overflow: hidden; }
+  *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
 
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    cursor: none;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'DM Sans',sans-serif;
+    font-weight:300;
+    line-height:1.7;
+    overflow-x:hidden;
   }
 
-  /* ── CUSTOM CURSOR ── */
-  .cursor {
-    position: fixed;
-    width: 12px; height: 12px;
-    background: var(--purple);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
-    mix-blend-mode: screen;
-  }
-  .cursor-ring {
-    position: fixed;
-    width: 36px; height: 36px;
-    border: 1px solid rgba(139,92,246,0.4);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: transform 0.15s ease, width 0.25s, height 0.25s;
+  body::before {
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events:none;
+    z-index:0;
+    opacity:0.4;
   }
 
-  /* ── PROGRESS BAR ── */
-  .progress-bar {
-    position: fixed;
-    top: 0; left: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--purple), var(--accent));
-    z-index: 100;
-    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
-    width: 0%;
+  /* ════════════════════════════════════
+     PART 1 — DOCUMENTATION SITE
+  ════════════════════════════════════ */
+
+  /* ── HERO ── */
+  .hero {
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding:0 6vw 8vh;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-bg {
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 30%,rgba(139,92,246,.18) 0%,transparent 70%),
+      radial-gradient(ellipse 50% 40% at 20% 80%,rgba(249,115,22,.08) 0%,transparent 60%),
+      var(--bg);
+    z-index:0;
+  }
+  .hero-legend {
+    position:absolute;
+    top:0;
+    left:55%;
+    width:70%;
+    pointer-events:none;
+    z-index:0;
+    opacity:0.18;
+    mix-blend-mode:screen;
+  }
+  .hero-legend img { width:100%; display:block; }
+
+  .hero-eyebrow {
+    font-family:'DM Mono',monospace;
+    font-size:11px;
+    letter-spacing:.2em;
+    color:var(--purple-l);
+    text-transform:uppercase;
+    margin-bottom:2rem;
+    position:relative;
+    z-index:1;
+    /* FIXED: no animation delay — visible immediately */
+    opacity:1;
+  }
+  .hero-title {
+    font-family:'DM Serif Display',serif;
+    font-size:clamp(4rem,12vw,11rem);
+    line-height:.92;
+    color:var(--white);
+    position:relative;
+    z-index:1;
+    opacity:1;
+  }
+  .hero-title em {
+    font-style:italic;
+    background:linear-gradient(135deg,var(--purple-l) 0%,var(--accent) 100%);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  .hero-sub {
+    font-size:clamp(.95rem,1.8vw,1.2rem);
+    color:var(--gray);
+    margin-top:2rem;
+    max-width:540px;
+    position:relative;
+    z-index:1;
+    opacity:1;
+    font-weight:300;
+    letter-spacing:.01em;
+  }
+  .hero-meta {
+    display:flex;
+    gap:3rem;
+    margin-top:3rem;
+    position:relative;
+    z-index:1;
+    opacity:1;
+    flex-wrap:wrap;
+  }
+  .hero-meta-item { display:flex; flex-direction:column; gap:4px; }
+  .hero-meta-label {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    letter-spacing:.15em;
+    color:var(--purple);
+    text-transform:uppercase;
+  }
+  .hero-meta-val { font-size:13px; color:var(--gray-l); font-weight:400; }
+
+  /* ── SECTIONS ── */
+  section {
+    position:relative;
+    z-index:1;
+    padding:8rem 6vw;
+  }
+  section+section { padding-top:0; }
+  .section-eyebrow {
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    letter-spacing:.2em;
+    color:var(--purple);
+    text-transform:uppercase;
+    margin-bottom:1.2rem;
+  }
+  .section-title {
+    font-family:'DM Serif Display',serif;
+    font-size:clamp(2.2rem,5vw,4rem);
+    line-height:1.05;
+    color:var(--white);
+    margin-bottom:1.5rem;
+  }
+  .section-title em { font-style:italic; color:var(--purple-l); }
+  .section-body {
+    font-size:1rem;
+    color:var(--gray);
+    max-width:600px;
+    line-height:1.8;
+    font-weight:300;
   }
 
-  /* ── SLIDE COUNTER ── */
-  .slide-counter {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: var(--gray);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  /* ── TEAM BLOCK ── */
+  .team-block {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:4rem;
+    align-items:center;
+    margin-top:4rem;
   }
-  .slide-counter-current {
-    font-size: 18px;
-    color: var(--white);
-    font-weight: 500;
+  .team-photo {
+    border-radius:12px;
+    overflow:hidden;
+    border:1px solid var(--border);
+    position:relative;
   }
-  .slide-counter-dots {
-    display: flex;
-    gap: 5px;
-    align-items: center;
+  .team-photo img { width:100%; display:block; filter:saturate(.85); }
+  .team-photo::after {
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg,rgba(139,92,246,.1) 0%,transparent 60%);
+    pointer-events:none;
   }
-  .dot {
-    width: 4px; height: 4px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.2);
-    transition: all 0.3s;
-    cursor: pointer;
+  .team-details { display:flex; flex-direction:column; gap:2rem; }
+  .team-stat {
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    padding-left:1.5rem;
+    border-left:2px solid var(--purple);
   }
-  .dot.active {
-    background: var(--purple);
-    width: 16px;
-    border-radius: 2px;
+  .team-stat-num {
+    font-family:'DM Serif Display',serif;
+    font-size:2.8rem;
+    color:var(--white);
+    line-height:1;
+  }
+  .team-stat-label { font-size:.85rem; color:var(--gray); font-weight:300; }
+
+  /* ── METHODS GRID ── */
+  .methods-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:2px;
+    margin-top:5rem;
+    background:var(--border);
+    border-radius:16px;
+    overflow:hidden;
+  }
+  .method-card {
+    background:var(--bg2);
+    padding:3.5rem;
+    position:relative;
+    overflow:hidden;
+  }
+  .method-card::before {
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;
+    height:2px;
+    background:var(--accent-color,var(--purple));
+  }
+  .method-num {
+    font-family:'DM Mono',monospace;
+    font-size:72px;
+    font-weight:500;
+    color:rgba(255,255,255,.04);
+    position:absolute;
+    top:1.5rem;right:2rem;
+    line-height:1;
+    pointer-events:none;
+    user-select:none;
+  }
+  .method-tag {
+    display:inline-block;
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    padding:4px 10px;
+    border-radius:3px;
+    margin-bottom:1.5rem;
+    background:rgba(139,92,246,.12);
+    color:var(--accent-color,var(--purple-l));
+    border:1px solid rgba(139,92,246,.2);
+  }
+  .method-title {
+    font-family:'DM Serif Display',serif;
+    font-size:2rem;
+    color:var(--white);
+    margin-bottom:1rem;
+    line-height:1.1;
+  }
+  .method-body { font-size:.9rem; color:var(--gray); line-height:1.75; margin-bottom:2rem; }
+  .method-why {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--accent-color,var(--purple));
+    margin-bottom:.5rem;
+  }
+  .method-why-text {
+    font-size:.88rem;
+    color:var(--gray-l);
+    font-style:italic;
+    border-left:2px solid var(--accent-color,var(--purple));
+    padding-left:1rem;
+    line-height:1.6;
   }
 
-  /* ── NAV ARROWS ── */
-  .nav-arrow {
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 44px; height: 44px;
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    background: rgba(13,11,26,0.6);
-    backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 100;
-    transition: all 0.2s;
-    color: var(--gray);
+  /* ── KHOJ CRITERIA ── */
+  .khoj-criteria {
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:1px;
+    margin-top:3rem;
+    background:var(--border);
+    border-radius:12px;
+    overflow:hidden;
   }
-  .nav-arrow:hover {
-    border-color: var(--purple);
-    color: var(--purple);
-    background: rgba(139,92,246,0.1);
+  .criterion {
+    background:var(--bg3);
+    padding:1.5rem 1.2rem;
+    display:flex;
+    flex-direction:column;
+    gap:.5rem;
   }
-  .nav-arrow.prev { left: 1.5rem; }
-  .nav-arrow.next { right: 1.5rem; }
-  .nav-arrow.hidden { opacity: 0; pointer-events: none; }
+  .criterion-num {
+    font-family:'DM Mono',monospace;
+    font-size:22px;
+    font-weight:500;
+    color:var(--purple);
+    line-height:1;
+  }
+  .criterion-label { font-size:.75rem; color:var(--gray-l); font-weight:400; line-height:1.4; }
+  .criterion-sub { font-size:.68rem; color:var(--gray); font-weight:300; line-height:1.4; margin-top:2px; }
 
-  /* ── SCROLL HINT ── */
-  .scroll-hint {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    color: var(--gray);
-    text-transform: uppercase;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    opacity: 1;
-    transition: opacity 0.5s;
+  /* ── SCREENSHOTS STRIP ── */
+  .screenshots-strip {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1.5rem;
+    margin-top:3rem;
   }
-  .scroll-hint.hidden { opacity: 0; }
-  .scroll-hint-line {
-    width: 24px;
-    height: 1px;
-    background: var(--gray);
-    animation: pulseWidth 1.5s ease-in-out infinite;
+  .screenshot-frame {
+    border-radius:8px;
+    overflow:hidden;
+    border:1px solid var(--border);
+    position:relative;
   }
-  @keyframes pulseWidth {
-    0%, 100% { width: 24px; }
-    50% { width: 40px; }
+  .screenshot-frame img {
+    width:100%;
+    display:block;
+    filter:saturate(.9) brightness(.95);
+    transition:filter .3s;
   }
-
-  /* ── VIEWPORT CONTAINER ── */
-  .viewport {
-    position: fixed;
-    inset: 0;
-    overflow: hidden;
+  .screenshot-frame:hover img { filter:saturate(1) brightness(1); }
+  .screenshot-caption {
+    position:absolute;
+    bottom:0;left:0;right:0;
+    padding:.75rem;
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    letter-spacing:.1em;
+    color:var(--gray);
+    background:linear-gradient(transparent,rgba(13,11,26,.9));
+    text-transform:uppercase;
   }
 
-  /* ── SLIDES TRACK ── */
-  .track {
-    display: flex;
-    height: 100%;
-    transition: transform 0.7s cubic-bezier(0.77, 0, 0.175, 1);
-    will-change: transform;
+  /* ── RESEARCH CARD ── */
+  .card-anatomy {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:4rem;
+    align-items:start;
+    margin-top:4rem;
+  }
+  .card-screenshot {
+    border-radius:12px;
+    overflow:hidden;
+    border:1px solid var(--border);
+    position:sticky;
+    top:6rem;
+  }
+  .card-screenshot img { width:100%; display:block; }
+  .card-sections { display:flex; flex-direction:column; gap:0; }
+  .card-section {
+    padding:1.5rem 0;
+    border-bottom:1px solid var(--border);
+  }
+  .card-section:last-child { border-bottom:none; }
+  .card-section-title {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--purple-l);
+    margin-bottom:.6rem;
+  }
+  .card-section-body { font-size:.87rem; color:var(--gray); line-height:1.7; }
+  .card-fields { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.75rem; }
+  .card-field {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    padding:4px 10px;
+    border-radius:3px;
+    background:rgba(139,92,246,.1);
+    color:var(--purple-l);
+    border:1px solid rgba(139,92,246,.15);
+    letter-spacing:.1em;
+    text-transform:uppercase;
   }
 
-  /* ── INDIVIDUAL SLIDE ── */
-  .slide {
-    min-width: 100vw;
-    height: 100%;
-    display: flex;
-    align-items: stretch;
-    position: relative;
-    overflow: hidden;
+  /* ── RULE ── */
+  .rule { height:1px; background:var(--border); margin:0 6vw; }
+
+  /* ── FADE IN ── */
+  .fade-in {
+    opacity:0;
+    transform:translateY(20px);
+    transition:opacity .7s ease,transform .7s ease;
+  }
+  .fade-in.visible { opacity:1; transform:none; }
+
+  /* ════════════════════════════════════
+     PROCESS SECTION DIVIDER
+  ════════════════════════════════════ */
+  .process-intro {
+    padding:8rem 6vw 4rem;
+    position:relative;
+    z-index:1;
+    border-top:1px solid var(--border);
+  }
+  .process-intro-eyebrow {
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    letter-spacing:.2em;
+    color:var(--purple);
+    text-transform:uppercase;
+    margin-bottom:1.2rem;
+  }
+  .process-intro-title {
+    font-family:'DM Serif Display',serif;
+    font-size:clamp(2.2rem,5vw,4rem);
+    line-height:1.05;
+    color:var(--white);
+    margin-bottom:1.5rem;
+  }
+  .process-intro-title em { font-style:italic; color:var(--purple-l); }
+  .process-intro-body {
+    font-size:1rem;
+    color:var(--gray);
+    max-width:600px;
+    line-height:1.8;
+    font-weight:300;
+    margin-bottom:2rem;
+  }
+  .scroll-cta {
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+    color:var(--purple-l);
+    margin-top:1rem;
+  }
+  .scroll-cta-line {
+    width:32px;
+    height:1px;
+    background:var(--purple);
+    animation:growLine 1.5s ease-in-out infinite;
+  }
+  @keyframes growLine {
+    0%,100% { width:32px; }
+    50% { width:52px; }
   }
 
-  /* ── SLIDE LAYOUTS ── */
+  /* ════════════════════════════════════
+     PART 2 — PROCESS SCROLLYTELLING
+  ════════════════════════════════════ */
 
-  /* Layout A: full image + side label */
-  .layout-full {
-    flex-direction: column;
+  /* The scrollytelling viewport is NOT fixed — it sits in the normal flow */
+  .process-scroll-wrapper {
+    position:relative;
+    width:100%;
+    /* height is set by JS based on number of slides */
+    z-index:1;
   }
 
-  .slide-header {
-    padding: 2rem 3rem 1.5rem;
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-    position: relative;
-    z-index: 2;
+  /* The sticky container that holds the visual */
+  .process-sticky {
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow:hidden;
+    background:var(--bg);
   }
 
-  .slide-num {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: var(--purple);
-    text-transform: uppercase;
+  /* Progress bar for process section */
+  .process-progress {
+    position:absolute;
+    top:0;left:0;
+    height:2px;
+    background:linear-gradient(90deg,var(--purple),var(--accent));
+    z-index:10;
+    transition:width 0.1s;
+    width:0%;
   }
 
-  .slide-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(1.4rem, 3vw, 2.4rem);
-    color: var(--white);
-    line-height: 1.05;
+  /* Slide counter */
+  .process-counter {
+    position:absolute;
+    bottom:1.5rem;
+    right:2rem;
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    letter-spacing:.12em;
+    color:var(--gray);
+    z-index:10;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .process-counter-num {
+    font-size:16px;
+    color:var(--white);
+    font-weight:500;
   }
 
-  .slide-title em {
-    font-style: italic;
-    color: var(--purple-l);
+  /* Dot nav */
+  .process-dots {
+    position:absolute;
+    bottom:1.5rem;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:5px;
+    z-index:10;
+  }
+  .pdot {
+    width:4px; height:4px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.2);
+    transition:all .3s;
+    cursor:pointer;
+  }
+  .pdot.active {
+    background:var(--purple);
+    width:16px;
+    border-radius:2px;
   }
 
-  .slide-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--gray);
-    align-self: center;
+  /* Keyboard hint */
+  .process-hint {
+    position:absolute;
+    bottom:1.5rem;
+    left:2rem;
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+    color:var(--gray);
+    z-index:10;
+    opacity:1;
+    transition:opacity .5s;
+  }
+  .process-hint.gone { opacity:0; }
+
+  /* Slides track — horizontal */
+  .process-track {
+    display:flex;
+    height:100%;
+    transition:transform 0.65s cubic-bezier(0.77,0,0.175,1);
+    will-change:transform;
   }
 
-  /* Image area */
-  .slide-image-area {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem 3rem;
-    gap: 3rem;
-    overflow: hidden;
-    position: relative;
+  /* Individual slide */
+  .pslide {
+    min-width:100vw;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    overflow:hidden;
   }
 
-  .slide-image-area.with-caption {
-    padding-right: 2rem;
+  /* Slide header */
+  .pslide-header {
+    padding:2rem 3rem 1.5rem;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    border-bottom:1px solid var(--border);
+    flex-shrink:0;
+    z-index:2;
+    /* FIXED: visible immediately, fade handled by .pslide.pactive */
+    opacity:0;
+    transform:translateY(12px);
+    transition:opacity .5s .1s, transform .5s .1s;
+  }
+  .pslide.pactive .pslide-header { opacity:1; transform:none; }
+
+  .pslide-num {
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    letter-spacing:.2em;
+    color:var(--purple);
+    text-transform:uppercase;
+  }
+  .pslide-title {
+    font-family:'DM Serif Display',serif;
+    font-size:clamp(1.4rem,3vw,2.4rem);
+    color:var(--white);
+    line-height:1.05;
+  }
+  .pslide-title em { font-style:italic; color:var(--purple-l); }
+  .pslide-tag {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--gray);
+    align-self:center;
   }
 
-  .slide-img {
-    max-height: 100%;
-    max-width: 100%;
-    object-fit: contain;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    flex-shrink: 0;
+  /* Slide body — image + caption */
+  .pslide-body {
+    flex:1;
+    display:flex;
+    align-items:stretch;
+    overflow:hidden;
+    opacity:0;
+    transform:translateY(12px);
+    transition:opacity .5s .2s, transform .5s .2s;
+  }
+  .pslide.pactive .pslide-body { opacity:1; transform:none; }
+
+  /* Image pane */
+  .pslide-img-pane {
+    flex:1;
+    min-width:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:1.5rem 2rem 1.5rem 3rem;
+    overflow:hidden;
+  }
+  .pslide-img-pane img {
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain;
+    border-radius:6px;
+    border:1px solid var(--border);
+    display:block;
+  }
+  .pslide-img-pane.no-border img { border:none; }
+
+  /* Caption pane — FIXED: internal scroll, fixed width, doesn't overflow */
+  .pslide-caption {
+    width:300px;
+    flex-shrink:0;
+    padding:2rem 3rem 2rem 2rem;
+    display:flex;
+    flex-direction:column;
+    gap:1.5rem;
+    /* FIXED: overflow scroll so content is accessible without triggering slide change */
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(139,92,246,0.3) transparent;
+  }
+  .pslide-caption::-webkit-scrollbar { width:3px; }
+  .pslide-caption::-webkit-scrollbar-track { background:transparent; }
+  .pslide-caption::-webkit-scrollbar-thumb { background:rgba(139,92,246,0.3); border-radius:2px; }
+
+  .cap-label {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--purple-l);
+    margin-bottom:.4rem;
+  }
+  .cap-text {
+    font-size:.87rem;
+    color:var(--gray);
+    line-height:1.7;
+  }
+  .cap-highlight {
+    font-size:.84rem;
+    color:var(--gray-l);
+    font-style:italic;
+    border-left:2px solid var(--purple);
+    padding-left:.9rem;
+    line-height:1.6;
   }
 
-  /* For slides with side caption */
-  .slide-caption-col {
-    width: 280px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    justify-content: center;
+  /* Full-bleed slides (no caption) */
+  .pslide-body.fullbleed .pslide-img-pane {
+    padding:1rem 2rem 1.5rem;
   }
 
-  .caption-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--purple-l);
-    margin-bottom: 0.4rem;
+  /* Intro slide */
+  .pslide-intro {
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    gap:1.5rem;
+    padding:2rem;
+    opacity:0;
+    transform:translateY(12px);
+    transition:opacity .5s .1s, transform .5s .1s;
   }
-
-  .caption-text {
-    font-size: 0.88rem;
-    color: var(--gray);
-    line-height: 1.7;
-  }
-
-  .caption-highlight {
-    font-size: 0.82rem;
-    color: var(--gray-l);
-    font-style: italic;
-    border-left: 2px solid var(--purple);
-    padding-left: 0.75rem;
-    line-height: 1.6;
-  }
-
-  /* Multi-image layout */
-  .slide-multi {
-    display: grid;
-    gap: 1rem;
-    flex: 1;
-    padding: 1.5rem 3rem;
-    overflow: hidden;
-  }
-
-  .slide-multi.cols-2 {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .slide-multi.cols-3 {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-
-  .multi-img-wrap {
-    position: relative;
-    overflow: hidden;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-  }
-
-  .multi-img-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top;
-    display: block;
-    filter: saturate(0.9) brightness(0.95);
-    transition: filter 0.3s;
-  }
-
-  .multi-img-wrap:hover img {
-    filter: saturate(1) brightness(1);
-  }
-
-  .multi-img-label {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    padding: 0.6rem 0.8rem;
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    color: var(--gray-l);
-    background: linear-gradient(transparent, rgba(13,11,26,0.85));
-    text-transform: uppercase;
-  }
-
-  /* ── SLIDE 0: INTRO / CHAPTER TITLE ── */
-  .slide-intro {
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    gap: 2rem;
-  }
+  /* FIXED: intro visible immediately on first load */
+  .pslide.pactive .pslide-intro { opacity:1; transform:none; }
 
   .intro-eyebrow {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    color: var(--purple);
-    text-transform: uppercase;
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    letter-spacing:.25em;
+    color:var(--purple);
+    text-transform:uppercase;
   }
-
-  .intro-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(3rem, 8vw, 7rem);
-    color: var(--white);
-    line-height: 0.95;
+  .intro-big {
+    font-family:'DM Serif Display',serif;
+    font-size:clamp(2.5rem,7vw,6rem);
+    color:var(--white);
+    line-height:.95;
   }
-
-  .intro-title em {
-    font-style: italic;
-    background: linear-gradient(135deg, var(--purple-l), var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  .intro-big em {
+    font-style:italic;
+    background:linear-gradient(135deg,var(--purple-l),var(--accent));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
   }
-
   .intro-sub {
-    font-size: 1rem;
-    color: var(--gray);
-    max-width: 480px;
-    line-height: 1.7;
-    font-weight: 300;
+    font-size:.95rem;
+    color:var(--gray);
+    max-width:440px;
+    line-height:1.7;
+  }
+  .intro-chips {
+    display:flex;
+    flex-wrap:wrap;
+    gap:.5rem;
+    justify-content:center;
+    margin-top:.5rem;
+  }
+  .chip {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    padding:4px 10px;
+    border:1px solid var(--border);
+    border-radius:3px;
+    color:var(--gray);
+    cursor:pointer;
+    transition:all .2s;
+  }
+  .chip:hover { border-color:var(--purple); color:var(--purple-l); }
+
+  /* Multi-image layout */
+  .pslide-multi {
+    flex:1;
+    display:grid;
+    gap:1rem;
+    padding:1.5rem 3rem;
+    overflow:hidden;
+  }
+  .pslide-multi.cols-3 { grid-template-columns:1fr 1fr 1fr; }
+
+  .multi-wrap {
+    position:relative;
+    overflow:hidden;
+    border-radius:8px;
+    border:1px solid var(--border);
+  }
+  .multi-wrap img {
+    width:100%; height:100%;
+    object-fit:cover;
+    object-position:top;
+    display:block;
+    filter:saturate(.9) brightness(.95);
+    transition:filter .3s;
+  }
+  .multi-wrap:hover img { filter:saturate(1) brightness(1); }
+  .multi-label {
+    position:absolute;
+    bottom:0;left:0;right:0;
+    padding:.6rem .8rem;
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    letter-spacing:.1em;
+    color:var(--gray-l);
+    background:linear-gradient(transparent,rgba(13,11,26,.85));
+    text-transform:uppercase;
   }
 
-  .intro-steps {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 1rem;
+  /* ── FOOTER ── */
+  footer {
+    padding:3rem 6vw;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-top:1px solid var(--border);
+    position:relative;
+    z-index:1;
+  }
+  .footer-title {
+    font-family:'DM Serif Display',serif;
+    font-size:1.1rem;
+    color:var(--white);
+  }
+  .footer-sub { font-size:.78rem; color:var(--gray); font-weight:300; margin-top:4px; }
+  .footer-right {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    letter-spacing:.12em;
+    color:var(--gray);
+    text-transform:uppercase;
   }
 
-  .intro-step {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 5px 12px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    color: var(--gray);
-    transition: all 0.2s;
-  }
-
-  .intro-step:hover {
-    border-color: var(--purple);
-    color: var(--purple-l);
-    cursor: pointer;
-  }
-
-  /* ── SLIDE BACKGROUNDS ── */
-  .slide-bg {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  .slide-content {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-
-  /* ── FINAL SLIDE ── */
-  .slide-final .slide-image-area {
-    padding: 1rem 2rem;
-  }
-
-  .slide-final .slide-img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: none;
-  }
-
-  /* ── ANIMATIONS ── */
-  .slide .slide-header,
-  .slide .slide-image-area,
-  .slide .slide-caption-col,
-  .slide .intro-eyebrow,
-  .slide .intro-title,
-  .slide .intro-sub,
-  .slide .intro-steps {
-    opacity: 0;
-    transform: translateY(16px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-
-  .slide.active .slide-header { opacity: 1; transform: none; transition-delay: 0.1s; }
-  .slide.active .slide-image-area { opacity: 1; transform: none; transition-delay: 0.2s; }
-  .slide.active .slide-caption-col { opacity: 1; transform: none; transition-delay: 0.3s; }
-  .slide.active .intro-eyebrow { opacity: 1; transform: none; transition-delay: 0.1s; }
-  .slide.active .intro-title { opacity: 1; transform: none; transition-delay: 0.2s; }
-  .slide.active .intro-sub { opacity: 1; transform: none; transition-delay: 0.35s; }
-  .slide.active .intro-steps { opacity: 1; transform: none; transition-delay: 0.45s; }
-
-  /* ── NOISE TEXTURE ── */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 50;
-    opacity: 0.35;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: none; }
+  /* ── RESPONSIVE ── */
+  @media(max-width:900px){
+    .team-block,.methods-grid,.card-anatomy { grid-template-columns:1fr; }
+    .khoj-criteria { grid-template-columns:repeat(3,1fr); }
+    .screenshots-strip { grid-template-columns:repeat(2,1fr); }
+    .card-screenshot { position:static; }
+    .pslide-caption { width:220px; padding:1.5rem 1.5rem 1.5rem 1rem; }
   }
 </style>
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+<!-- ════════════════════════════════════
+     PART 1 — DOCUMENTATION SITE
+════════════════════════════════════ -->
 
-<div class="progress-bar" id="progressBar"></div>
-
-<!-- NAV ARROWS -->
-<button class="nav-arrow prev hidden" id="prevBtn" aria-label="Previous slide">
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-    <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-  </svg>
-</button>
-<button class="nav-arrow next" id="nextBtn" aria-label="Next slide">
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-    <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-  </svg>
-</button>
-
-<!-- SCROLL HINT -->
-<div class="scroll-hint" id="scrollHint">
-  <span class="scroll-hint-line"></span>
-  scroll or use arrows
-  <span class="scroll-hint-line"></span>
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-legend">
+    <img src="images/legend.png" alt="">
+  </div>
+  <div class="hero-eyebrow">Design Project 3 · Systems Mapping · Sem 4</div>
+  <h1 class="hero-title">Raised in<br><em>Illusion</em></h1>
+  <p class="hero-sub">Exploring the emergence of identity of Gen Alpha children in the presence of digital visual media — a systems gigamap.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Students</span>
+      <span class="hero-meta-val">7 — INxD &amp; UD</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Duration</span>
+      <span class="hero-meta-val">10 weeks</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Method</span>
+      <span class="hero-meta-val">Systems Gigamap</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Context</span>
+      <span class="hero-meta-val">India · Gen Alpha</span>
+    </div>
+  </div>
 </div>
 
-<!-- SLIDE COUNTER -->
-<div class="slide-counter">
-  <span class="slide-counter-current" id="currentNum">01</span>
-  <span style="color:var(--border)">/</span>
-  <span id="totalNum">11</span>
-  <div class="slide-counter-dots" id="dots"></div>
+<!-- ABOUT -->
+<section>
+  <div class="fade-in">
+    <p class="section-eyebrow">About the project</p>
+    <h2 class="section-title">A system nobody<br>designed. <em>On purpose.</em></h2>
+  </div>
+  <div class="team-block fade-in">
+    <div class="team-photo">
+      <img src="images/team.jpeg" alt="The team working together around a table with whiteboards and sticky notes">
+    </div>
+    <div class="team-details">
+      <p class="section-body">This project maps what happens when children in India grow up inside a digital ecosystem that nobody designed for child development — and nobody can easily turn off. The gigamap traces the causal loops that form identity before the child can choose their own.</p>
+      <div class="team-stat">
+        <span class="team-stat-num">7</span>
+        <span class="team-stat-label">students from INxD and UD, each assigned a keyword domain</span>
+      </div>
+      <div class="team-stat">
+        <span class="team-stat-num">25+</span>
+        <span class="team-stat-label">research articles synthesised across domains</span>
+      </div>
+      <div class="team-stat">
+        <span class="team-stat-num">30+</span>
+        <span class="team-stat-label">causal loops mapped across 8 actor clusters</span>
+      </div>
+      <div class="team-stat">
+        <span class="team-stat-num">8</span>
+        <span class="team-stat-label">leverage points identified for intervention</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- METHODOLOGIES -->
+<section>
+  <div class="fade-in">
+    <p class="section-eyebrow">Novel Design Methodologies</p>
+    <h2 class="section-title">Two tools built<br>to do this <em>properly.</em></h2>
+    <p class="section-body">Before the gigamap could exist, the team needed a way to choose the right system — and then read every source in the same language. These two methodologies were designed for that.</p>
+  </div>
+  <div class="methods-grid fade-in">
+    <div class="method-card" style="--accent-color:var(--purple-l)">
+      <span class="method-num">01</span>
+      <span class="method-tag">Topic Selection</span>
+      <h3 class="method-title">Topic Khoj</h3>
+      <p class="method-body">A structured matrix for evaluating and scoring potential research systems before committing to one. Every candidate topic was assessed across seven criteria by each team member independently, then aggregated. The score reveals not just what is interesting — but what is mappable, accessible, and genuinely urgent within the project's constraints.</p>
+      <p class="method-why">Why it matters</p>
+      <p class="method-why-text">Prevents the team from choosing a topic based on enthusiasm alone. Forces explicit reckoning with feasibility, access, and ethical weight before any research begins.</p>
+    </div>
+    <div class="method-card" style="--accent-color:var(--teal)">
+      <span class="method-num">02</span>
+      <span class="method-tag" style="background:rgba(45,212,191,.1);color:var(--teal);border-color:rgba(45,212,191,.2)">Research Synthesis</span>
+      <h3 class="method-title">Research Consolidation Card</h3>
+      <p class="method-body">One card per source. A fixed-format reading instrument that every team member completes for every paper, book, article, or data source they read. The card forces four questions: what it says, what it assumes, how it connects to the system map, and — critically — your own reading of its significance.</p>
+      <p class="method-why" style="color:var(--teal)">Why it matters</p>
+      <p class="method-why-text" style="border-color:var(--teal)">Transforms individual reading into collective intelligence. When all seven students use the same card format, their findings become comparable, combinable, and directly mappable to the gigamap's nodes and relationships.</p>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- TOPIC KHOJ DETAIL -->
+<section>
+  <div class="fade-in">
+    <p class="section-eyebrow">Methodology 01 — Topic Khoj</p>
+    <h2 class="section-title">Seven criteria.<br><em>One system.</em></h2>
+    <p class="section-body">Each student scored every candidate topic independently across seven dimensions — out of 5 each, 35 per person, 210 total across the full team. The scoring was not a vote. It was a structured argument.</p>
+  </div>
+  <div class="khoj-criteria fade-in">
+    <div class="criterion"><span class="criterion-num">01</span><span class="criterion-label">System Depth Potential</span><span class="criterion-sub">Multiple actors, power imbalance, feedback loops, formal + informal layers</span></div>
+    <div class="criterion"><span class="criterion-num">02</span><span class="criterion-label">Access to Primary Research</span><span class="criterion-sub">Can we visit, observe, interview, collect artifacts?</span></div>
+    <div class="criterion"><span class="criterion-num">03</span><span class="criterion-label">Team Skill Alignment</span><span class="criterion-sub">Engages both Universal + Information Design strengths</span></div>
+    <div class="criterion"><span class="criterion-num">04</span><span class="criterion-label">Emotional Energy</span><span class="criterion-sub">Will the team stay invested for 10 weeks?</span></div>
+    <div class="criterion"><span class="criterion-num">05</span><span class="criterion-label">Ethical Weight</span><span class="criterion-sub">Does it meaningfully matter?</span></div>
+    <div class="criterion"><span class="criterion-num">06</span><span class="criterion-label">Intervention Potential</span><span class="criterion-sub">Policy, tool, startup — scalable impact possible?</span></div>
+    <div class="criterion"><span class="criterion-num">07</span><span class="criterion-label">Feasibility in 10 Weeks</span><span class="criterion-sub">Deep mapping possible without becoming superficial?</span></div>
+  </div>
+  <div class="screenshots-strip fade-in">
+    <div class="screenshot-frame"><img src="images/sheet1.png" alt="Topic Khoj spreadsheet — topics, actors, flows"><span class="screenshot-caption">Topics · Actors · Flows</span></div>
+    <div class="screenshot-frame"><img src="images/sheet2.png" alt="Topic Khoj spreadsheet — institutions and risks"><span class="screenshot-caption">Institutions · Risks</span></div>
+    <div class="screenshot-frame"><img src="images/sheet3.png" alt="Topic Khoj spreadsheet — scoring criteria"><span class="screenshot-caption">Scoring criteria</span></div>
+    <div class="screenshot-frame"><img src="images/sheet4.png" alt="Topic Khoj spreadsheet — final scores"><span class="screenshot-caption">Final scores · Grand totals</span></div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- RESEARCH CARD DETAIL -->
+<section>
+  <div class="fade-in">
+    <p class="section-eyebrow">Methodology 02 — Research Consolidation Card</p>
+    <h2 class="section-title">One card.<br><em>Every source.</em></h2>
+    <p class="section-body">Designed so that seven students reading across seven different keyword domains could produce findings in the same language — directly connectable to the gigamap's nodes, actors, and loops.</p>
+  </div>
+  <div class="card-anatomy fade-in">
+    <div class="card-screenshot"><img src="images/card.png" alt="Research Consolidation Card"></div>
+    <div class="card-sections">
+      <div class="card-section">
+        <p class="card-section-title">Section 1 — Source metadata</p>
+        <p class="card-section-body">Student name, keyword assigned, source title + author + year, source type. Ensures every card is traceable and attributable within the team.</p>
+        <div class="card-fields"><span class="card-field">Researcher</span><span class="card-field">Keyword</span><span class="card-field">Source</span><span class="card-field">Type</span></div>
+      </div>
+      <div class="card-section">
+        <p class="card-section-title">Section 2 — What it says</p>
+        <p class="card-section-body">Core argument in the student's own words. Key data and evidence with page references. What the source assumes. What it explicitly does NOT say — the map of what is missing.</p>
+        <div class="card-fields"><span class="card-field">Core argument</span><span class="card-field">Key data</span><span class="card-field">Assumptions</span><span class="card-field">What it does not say</span></div>
+      </div>
+      <div class="card-section">
+        <p class="card-section-title">Section 3 — How it connects</p>
+        <p class="card-section-body">Which keyword does this map to? Which actors does it identify? What forces or tensions does it name? What other keywords does it connect to?</p>
+        <div class="card-fields"><span class="card-field">Keyword mapping</span><span class="card-field">Actors</span><span class="card-field">Forces</span><span class="card-field">Cross-keyword links</span></div>
+      </div>
+      <div class="card-section">
+        <p class="card-section-title">Section 4 — For the gigamap</p>
+        <p class="card-section-body">One node this source suggests. One relationship it reveals. India relevance — does it transfer or need re-testing.</p>
+        <div class="card-fields"><span class="card-field">Node suggestion</span><span class="card-field">Relationship</span><span class="card-field">India relevance</span></div>
+      </div>
+      <div class="card-section">
+        <p class="card-section-title">Section 5 — Your own reading</p>
+        <p class="card-section-body">The student's personal interpretation — what they think is most significant, most understudied, most useful. The section that cannot be automated.</p>
+        <div class="card-fields">
+          <span class="card-field" style="background:rgba(249,115,22,.1);color:#F97316;border-color:rgba(249,115,22,.2)">Personal significance</span>
+          <span class="card-field" style="background:rgba(249,115,22,.1);color:#F97316;border-color:rgba(249,115,22,.2)">Student judgment</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     PROCESS INTRO BRIDGE
+════════════════════════════════════ -->
+<div class="process-intro fade-in">
+  <p class="process-intro-eyebrow">The Design Process</p>
+  <h2 class="process-intro-title">From four questions<br>to a <em>gigamap.</em></h2>
+  <p class="process-intro-body">Eleven stages — each one a week of research, debate, and drawing on whiteboards. Scroll through the process below.</p>
+  <div class="scroll-cta">
+    <span class="scroll-cta-line"></span>
+    scroll to enter the process
+    <span class="scroll-cta-line"></span>
+  </div>
 </div>
 
-<!-- VIEWPORT -->
-<div class="viewport">
-  <div class="track" id="track">
+<!-- ════════════════════════════════════
+     PART 2 — PROCESS SCROLLYTELLING
+════════════════════════════════════ -->
+<div class="process-scroll-wrapper" id="processWrapper">
+  <div class="process-sticky" id="processSticky">
 
-    <!-- ═══ SLIDE 0: INTRO ═══ -->
-    <div class="slide slide-intro active" id="slide-0">
-      <div class="slide-bg" style="background: radial-gradient(ellipse 70% 60% at 60% 40%, rgba(139,92,246,0.15) 0%, transparent 70%), radial-gradient(ellipse 40% 50% at 20% 70%, rgba(249,115,22,0.07) 0%, transparent 60%), var(--bg);"></div>
-      <div class="intro-eyebrow">Design Project 3 · Systems Mapping</div>
-      <h1 class="intro-title">The Design<br><em>Process</em></h1>
-      <p class="intro-sub">How 7 students built a systems gigamap — from four open questions to a full causal loop diagram of Gen Alpha identity formation.</p>
-      <div class="intro-steps">
-        <span class="intro-step" onclick="goTo(1)">Questions & Keywords</span>
-        <span class="intro-step" onclick="goTo(2)">Generational Research</span>
-        <span class="intro-step" onclick="goTo(3)">Erikson's Model</span>
-        <span class="intro-step" onclick="goTo(4)">Gen Alpha + Tech</span>
-        <span class="intro-step" onclick="goTo(5)">Old Loop</span>
-        <span class="intro-step" onclick="goTo(6)">New Loop (Physical)</span>
-        <span class="intro-step" onclick="goTo(7)">New Loop (Digital)</span>
-        <span class="intro-step" onclick="goTo(8)">Metaphor</span>
-        <span class="intro-step" onclick="goTo(9)">Kaleidoscope</span>
-        <span class="intro-step" onclick="goTo(10)">Triangle Icons</span>
-        <span class="intro-step" onclick="goTo(11)">Final Map</span>
-      </div>
+    <!-- Progress -->
+    <div class="process-progress" id="processProgress"></div>
+
+    <!-- Counter -->
+    <div class="process-counter">
+      <span class="process-counter-num" id="pCurrent">01</span>
+      <span style="color:var(--border)">/</span>
+      <span id="pTotal">12</span>
     </div>
 
-    <!-- ═══ SLIDE 1: 4 QUESTIONS + KEYWORDS ═══ -->
-    <div class="slide layout-full" id="slide-1">
-      <div class="slide-bg" style="background: var(--bg);"></div>
-      <div class="slide-content">
-        <div class="slide-header">
-          <div>
-            <div class="slide-num">01 — Entry Point</div>
-            <h2 class="slide-title">Four questions.<br><em>Three keywords.</em></h2>
-          </div>
-          <span class="slide-tag">Research framing</span>
-        </div>
-        <div class="slide-image-area with-caption">
-          <img class="slide-img" src="images/process/01_questions_keywords.png" alt="Four open questions about identity, attention, memory and abandonment, leading to keyword clusters" style="flex: 1; min-width: 0;">
-          <div class="slide-caption-col">
-            <div>
-              <p class="caption-label">What happened here</p>
-              <p class="caption-text">The team began with four open questions about what happens to identity, attention, and memory when digital systems replace human ones. These questions collapsed into three keywords — <strong>Identity · Attention · Memory</strong> — plus a fourth theme: abandonment of self due to technology.</p>
-            </div>
-            <div>
-              <p class="caption-label">Why it mattered</p>
-              <p class="caption-highlight">Starting with questions rather than a topic prevented premature closure. The keyword framework became the research assignment structure — each student took one domain.</p>
-            </div>
-            <div>
-              <p class="caption-label">Also visible</p>
-              <p class="caption-text">A generational spectrum mapping when each generation — from Silent Gen to Gen Beta — encountered transformational technology for the first time.</p>
-            </div>
+    <!-- Dots -->
+    <div class="process-dots" id="pDots"></div>
+
+    <!-- Hint -->
+    <div class="process-hint" id="pHint">↕ scroll to navigate</div>
+
+    <!-- Track -->
+    <div class="process-track" id="pTrack">
+
+      <!-- SLIDE 0: INTRO -->
+      <div class="pslide pactive" id="pslide-0">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 60% 40%,rgba(139,92,246,.15) 0%,transparent 70%),var(--bg);z-index:0;pointer-events:none;"></div>
+        <div class="pslide-intro" style="position:relative;z-index:1;">
+          <p class="intro-eyebrow">Design Process · 11 Stages</p>
+          <h2 class="intro-big">How it<br><em>was built.</em></h2>
+          <p class="intro-sub">From four open questions about identity and technology to a full systems gigamap of Gen Alpha identity formation.</p>
+          <div class="intro-chips">
+            <span class="chip" onclick="pGoTo(1)">Questions</span>
+            <span class="chip" onclick="pGoTo(2)">Generational Research</span>
+            <span class="chip" onclick="pGoTo(3)">Erikson</span>
+            <span class="chip" onclick="pGoTo(4)">Gen Alpha + Tech</span>
+            <span class="chip" onclick="pGoTo(5)">Old Loop</span>
+            <span class="chip" onclick="pGoTo(6)">New Loop Physical</span>
+            <span class="chip" onclick="pGoTo(7)">New Loop Digital</span>
+            <span class="chip" onclick="pGoTo(8)">Metaphor</span>
+            <span class="chip" onclick="pGoTo(9)">Kaleidoscope</span>
+            <span class="chip" onclick="pGoTo(10)">Triangle Icons</span>
+            <span class="chip" onclick="pGoTo(11)">Final Map</span>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- ═══ SLIDE 2: GENERATIONAL RESEARCH ═══ -->
-    <div class="slide layout-full" id="slide-2">
-      <div class="slide-bg" style="background: var(--bg);"></div>
-      <div class="slide-content">
-        <div class="slide-header">
-          <div>
-            <div class="slide-num">02 — Context</div>
-            <h2 class="slide-title">Every generation.<br><em>One comparison.</em></h2>
-          </div>
-          <span class="slide-tag">Generational research</span>
+      <!-- SLIDE 1 -->
+      <div class="pslide" id="pslide-1">
+        <div class="pslide-header">
+          <div><div class="pslide-num">01 — Entry Point</div><h2 class="pslide-title">Four questions.<br><em>Three keywords.</em></h2></div>
+          <span class="pslide-tag">Research framing</span>
         </div>
-        <div class="slide-image-area with-caption">
-          <img class="slide-img" src="images/process/02_generational_research.png" alt="Research boards for Gen Alpha, Gen Z, Millennials, Gen X and Gen Beta comparing identity, attention, memory and abandonment across generations" style="flex: 1; min-width: 0;">
-          <div class="slide-caption-col">
-            <div>
-              <p class="caption-label">What happened here</p>
-              <p class="caption-text">Each generation was researched across the same four dimensions: identity, behavioural habits, abandonment, and memory. Gen Alpha, Gen Z, Millennials, Gen X, and Gen Beta — each mapped on its own board so comparisons could be drawn across time.</p>
-            </div>
-            <div>
-              <p class="caption-label">The finding</p>
-              <p class="caption-highlight">Gen Alpha is the first generation for whom digital infrastructure arrived before identity formation began. Every prior generation had a pre-digital self to start from. Gen Alpha does not.</p>
-            </div>
+        <div class="pslide-body">
+          <div class="pslide-img-pane"><img src="images/process/01_questions_keywords.png" alt="Four open questions about identity, attention, memory and abandonment leading to keyword clusters"></div>
+          <div class="pslide-caption">
+            <div><p class="cap-label">What happened here</p><p class="cap-text">The team began with four open questions about what happens to identity, attention, and memory when digital systems replace human ones. These questions collapsed into three keywords — Identity · Attention · Memory — plus a fourth theme: abandonment of self due to technology.</p></div>
+            <div><p class="cap-label">Why it mattered</p><p class="cap-highlight">Starting with questions rather than a topic prevented premature closure. The keyword framework became the research assignment structure — each student took one domain.</p></div>
+            <div><p class="cap-label">Also visible</p><p class="cap-text">A generational spectrum mapping when each generation — from Silent Gen to Gen Beta — encountered transformational technology for the first time.</p></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- ═══ SLIDE 3: ERIKSON'S MODEL ═══ -->
-    <div class="slide layout-full" id="slide-3">
-      <div class="slide-bg" style="background: var(--bg);"></div>
-      <div class="slide-content">
-        <div class="slide-header">
-          <div>
-            <div class="slide-num">03 — Theoretical Anchor</div>
-            <h2 class="slide-title">The window that<br><em>cannot reopen.</em></h2>
-          </div>
-          <span class="slide-tag">Erikson's Psychosocial Development</span>
+      <!-- SLIDE 2 -->
+      <div class="pslide" id="pslide-2">
+        <div class="pslide-header">
+          <div><div class="pslide-num">02 — Context</div><h2 class="pslide-title">Every generation.<br><em>One comparison.</em></h2></div>
+          <span class="pslide-tag">Generational research</span>
         </div>
-        <div class="slide-image-area with-caption">
-          <img class="slide-img" src="images/process/03_erikson.png" alt="Erikson's 8 stages of psychosocial development — a table showing age, psychosocial conflict, basic virtue and description for each stage" style="max-height: 75%; flex: 1; min-width: 0;">
-          <div class="slide-caption-col">
-            <div>
-              <p class="caption-label">Why Erikson</p>
-              <p class="caption-text">Erikson's model established the developmental stakes. Each stage must resolve before the next becomes possible. Stages 1–4 (Trust, Autonomy, Initiative, Industry) are the preconditions for Stage 5: Identity vs Role Confusion — which is exactly what the system disrupts.</p>
-            </div>
-            <div>
-              <p class="caption-label">The argument</p>
-              <p class="caption-highlight">Screen exposure at 10 months enters at Stage 1. By the time identity formation begins at Stage 5, stages 1 through 4 have already been compromised. The algorithm doesn't cause identity confusion. It arrives into the space the damage created.</p>
-            </div>
+        <div class="pslide-body">
+          <div class="pslide-img-pane"><img src="images/process/02_generational_research.png" alt="Research boards for Gen Alpha, Gen Z, Millennials, Gen X and Gen Beta"></div>
+          <div class="pslide-caption">
+            <div><p class="cap-label">What happened here</p><p class="cap-text">Each generation was researched across the same four dimensions: identity, behavioural habits, abandonment, and memory. Gen Alpha, Gen Z, Millennials, Gen X, and Gen Beta — each mapped on its own board so comparisons could be drawn across time.</p></div>
+            <div><p class="cap-label">The finding</p><p class="cap-highlight">Gen Alpha is the first generation for whom digital infrastructure arrived before identity formation began. Every prior generation had a pre-digital self to start from. Gen Alpha does not.</p></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- ═══ SLIDE 4: GEN ALPHA + TECH ═══ -->
-    <div class="slide layout-full" id="slide-4">
-      <div class="slide-bg" style="background: var(--bg);"></div>
-      <div class="slide-content">
-        <div class="slide-header">
-          <div>
-            <div class="slide-num">04 — Primary Research</div>
-            <h2 class="slide-title">Gen Alpha<br><em>and tech.</em></h2>
-          </div>
-          <span class="slide-tag">Research synthesis</span>
+      <!-- SLIDE 3 -->
+      <div class="pslide" id="pslide-3">
+        <div class="pslide-header">
+          <div><div class="pslide-num">03 — Theoretical Anchor</div><h2 class="pslide-title">The window that<br><em>cannot reopen.</em></h2></div>
+          <span class="pslide-tag">Erikson's Psychosocial Development</span>
         </div>
-        <div class="slide-image-area with-caption">
-          <img class="slide-img" src="images/process/04_gen_alpha_tech.png" alt="Dense research board mapping Gen Alpha's relationship to technology — parenting patterns, algorithmic identity, social currency, digital citizenship challenges" style="flex: 1; min-width: 0;">
-          <div class="slide-caption-col">
-            <div>
-              <p class="caption-label">What this board covers</p>
-              <p class="caption-text">How parents use screens as behavioural tools. How the algorithm constructs identity before the child can. How social validation becomes the currency of existence. How educators and pediatricians lack the frameworks to respond.</p>
-            </div>
-            <div>
-              <p class="caption-label">Key data point</p>
-              <p class="caption-highlight">"Only 55.5% of current literature focuses directly on Gen Alpha, showing a massive 'guidance gap.'"</p>
-            </div>
-            <div>
-              <p class="caption-label">The Algorithmic Self thesis</p>
-              <p class="caption-text">Identity is no longer formed through relationships and lived experience — it is increasingly co-constructed by commercial systems that have no interest in the user's psychological development.</p>
-            </div>
+        <div class="pslide-body">
+          <div class="pslide-img-pane"><img src="images/process/03_erikson.png" alt="Erikson's 8 stages of psychosocial development table"></div>
+          <div class="pslide-caption">
+            <div><p class="cap-label">Why Erikson</p><p class="cap-text">Erikson's model established the developmental stakes. Each stage must resolve before the next becomes possible. Stages 1–4 are the preconditions for Stage 5: Identity vs Role Confusion — which is exactly what the system disrupts.</p></div>
+            <div><p class="cap-label">The argument</p><p class="cap-highlight">Screen exposure at 10 months enters at Stage 1. By the time identity formation begins at Stage 5, stages 1–4 have already been compromised. The algorithm doesn't cause identity confusion. It arrives into the space the damage created.</p></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- ═══ SLIDE 5: OLD CAUSAL LOOP ═══ -->
-    <div class="slide layout-full" id="slide-5">
-      <div class="slide-bg" style="background: var(--bg);"></div>
-      <div class="slide-content">
-        <div class="slide-header">
-          <div>
-            <div class="slide-num">05 — First Map</div>
-            <h2 class="slide-title">The loop with<br><em>our biases in it.</em></h2>
-          </div>
-          <span class="slide-tag">Version 1 · With known limitations</span>
+      <!-- SLIDE 4 -->
+      <div class="pslide" id="pslide-4">
+        <div class="pslide-header">
+          <div><div class="pslide-num">04 — Primary Research</div><h2 class="pslide-title">Gen Alpha<br><em>and tech.</em></h2></div>
+          <span class="pslide-tag">Research synthesis</span>
         </div>
-        <div class="slide-image-area with-caption">
-          <img class="slide-img" src="images/process/05_old_loop.png" alt="First version causal loop diagram — a complex map of nodes and arrows showing early attempt at mapping the system, with biases noted" style="flex: 1; min-width: 0;">
-          <div class="slide-caption-col">
-            <div>
-              <p class="caption-label">What this is</p>
-              <p class="caption-text">The first attempt at a causal loop diagram — built before the team had fully stress-tested the research. The loops are present, the actors are named, but the map carries the team's early assumptions about which forces dominate.</p>
-            </div>
-            <div>
-              <p class="caption-label">Why it's documented</p>
-              <p class="caption-highlight">Keeping the first version makes the evolution visible. The biases are named, not hidden. This is what the research looked like before it argued back.</p>
-            </div>
+        <div class="pslide-body">
+          <div class="pslide-img-pane"><img src="images/process/04_gen_alpha_tech.png" alt="Dense research board mapping Gen Alpha's relationship to technology"></div>
+          <div class="pslide-caption">
+            <div><p class="cap-label">What this board covers</p><p class="cap-text">How parents use screens as behavioural tools. How the algorithm constructs identity before the child can. How social validation becomes the currency of existence. How educators and pediatricians lack the frameworks to respond.</p></div>
+            <div><p class="cap-label">Key data point</p><p class="cap-highlight">"Only 55.5% of current literature focuses directly on Gen Alpha, showing a massive 'guidance gap.'"</p></div>
+            <div><p class="cap-label">The Algorithmic Self thesis</p><p class="cap-text">Identity is no longer formed through relationships and lived experience — it is increasingly co-constructed by commercial systems with no interest in the user's psychological development.</p></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- ═══ SLIDE 6: NEW LOOP PHYSICAL ═══ -->
-    <div class="slide layout-full" id="slide-6">
-      <div class="slide-bg" style="background: var(--bg);"></div>
-      <div class="slide-content">
-        <div class="slide-header">
-          <div>
-            <div class="slide-num">06 — Iteration</div>
-            <h2 class="slide-title">Built on<br><em>the wall.</em></h2>
-          </div>
-          <span class="slide-tag">New causal loop · Physical version</span>
+      <!-- SLIDE 5 -->
+      <div class="pslide" id="pslide-5">
+        <div class="pslide-header">
+          <div><div class="pslide-num">05 — First Map</div><h2 class="pslide-title">The loop with<br><em>our biases in it.</em></h2></div>
+          <span class="pslide-tag">Version 1 · With known limitations</span>
         </div>
-        <div class="slide-image-area with-caption">
-          <img class="slide-img" src="images/process/06_new_loop_physical.png" alt="Revised causal loop diagram in physical form — more developed, with clearer actor clusters and loop labels" style="flex: 1; min-width: 0;">
-          <div class="slide-caption-col">
-            <div>
-              <p class="caption-label">What changed</p>
-              <p class="caption-text">After stress-testing the first map against the research, the team rebuilt the loops. The caregiver cluster became more precise. The algorithm pipeline — Behaviour Classification, Vulnerability Targeting, Preference Reinforcement — was made explicit as a sequence, not just a node.</p>
-            </div>
-            <div>
-              <p class="caption-label">What stayed</p>
-              <p class="caption-highlight">The grandparent buffer remained the only named balancing loop. The reinforcing loops still dominated. The structural tilt hadn't changed — the research had just made it more legible.</p>
-            </div>
+        <div class="pslide-body">
+          <div class="pslide-img-pane"><img src="images/process/05_old_loop.png" alt="First version causal loop diagram with early assumptions"></div>
+          <div class="pslide-caption">
+            <div><p class="cap-label">What this is</p><p class="cap-text">The first attempt at a causal loop diagram — built before the team had fully stress-tested the research. The loops are present, the actors are named, but the map carries the team's early assumptions about which forces dominate.</p></div>
+            <div><p class="cap-label">Why it's documented</p><p class="cap-highlight">Keeping the first version makes the evolution visible. The biases are named, not hidden. This is what the research looked like before it argued back.</p></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- ═══ SLIDE 7: NEW LOOP DIGITAL ═══ -->
-    <div class="slide layout-full" id="slide-7">
-      <div class="slide-bg" style="background: var(--bg);"></div>
-      <div class="slide-content">
-        <div class="slide-header">
-          <div>
-            <div class="slide-num">07 — Digital Map</div>
-            <h2 class="slide-title">The system<br><em>in full.</em></h2>
-          </div>
-          <span class="slide-tag">New causal loop · Digital version</span>
+      <!-- SLIDE 6 -->
+      <div class="pslide" id="pslide-6">
+        <div class="pslide-header">
+          <div><div class="pslide-num">06 — Iteration</div><h2 class="pslide-title">Built on<br><em>the wall.</em></h2></div>
+          <span class="pslide-tag">New causal loop · Physical version</span>
         </div>
-        <div class="slide-image-area" style="padding: 1rem 2rem;">
-          <img class="slide-img" src="images/process/07_new_loop_digital.png" alt="Full digital causal loop diagram showing all actor clusters — caregiver, parents, child, social media algorithm, peers, AI influence — with colour-coded loops" style="width: 100%; height: 100%; object-fit: contain;">
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ SLIDE 8: METAPHOR WHITEBOARD ═══ -->
-    <div class="slide layout-full" id="slide-8">
-      <div class="slide-bg" style="background: var(--bg);"></div>
-      <div class="slide-content">
-        <div class="slide-header">
-          <div>
-            <div class="slide-num">08 — Visual Language</div>
-            <h2 class="slide-title">Finding the<br><em>right form.</em></h2>
-          </div>
-          <span class="slide-tag">Metaphor exploration · Whiteboard</span>
-        </div>
-        <div class="slide-image-area with-caption">
-          <img class="slide-img" src="images/process/08_metaphor_whiteboard.png" alt="Whiteboard sketches exploring visual metaphors for the gigamap — triangles for actors, hexagons, coral reef shapes, see-saw dynamics" style="flex: 1; min-width: 0; max-height: 80%;">
-          <div class="slide-caption-col">
-            <div>
-              <p class="caption-label">What the team explored</p>
-              <p class="caption-text">Multiple visual forms for the actor icons: hexagons, triangles, organic shapes, connected networks. Each actor (Parents & Caregivers, Algorithm, Social Media, Games, Ed-Tech, Advertisement, School, Influencer, Long Form Content, Health, Interruptions, Peers) needed a distinct visual identity that could work at the scale of a gigamap.</p>
-            </div>
-            <div>
-              <p class="caption-label">The decision</p>
-              <p class="caption-highlight">The triangle — with unique internal patterns per actor — emerged from the whiteboard session as the form that could hold both specificity and scalability.</p>
-            </div>
+        <div class="pslide-body">
+          <div class="pslide-img-pane"><img src="images/process/06_new_loop_physical.png" alt="Revised causal loop in physical form — more developed with clearer actor clusters"></div>
+          <div class="pslide-caption">
+            <div><p class="cap-label">What changed</p><p class="cap-text">After stress-testing against the research, the team rebuilt the loops. The caregiver cluster became more precise. The algorithm pipeline — Behaviour Classification, Vulnerability Targeting, Preference Reinforcement — was made explicit as a sequence.</p></div>
+            <div><p class="cap-label">What stayed</p><p class="cap-highlight">The grandparent buffer remained the only named balancing loop. The reinforcing loops still dominated. The structural tilt hadn't changed — the research had made it more legible.</p></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- ═══ SLIDE 9: KALEIDOSCOPE METAPHOR ═══ -->
-    <div class="slide layout-full" id="slide-9">
-      <div class="slide-bg" style="background: var(--bg);"></div>
-      <div class="slide-content">
-        <div class="slide-header">
-          <div>
-            <div class="slide-num">09 — Conceptual Metaphor</div>
-            <h2 class="slide-title">Fractured into<br><em>symmetry.</em></h2>
-          </div>
-          <span class="slide-tag">Kaleidoscope as identity formation</span>
+      <!-- SLIDE 7 — fullbleed -->
+      <div class="pslide" id="pslide-7">
+        <div class="pslide-header">
+          <div><div class="pslide-num">07 — Digital Map</div><h2 class="pslide-title">The system<br><em>in full.</em></h2></div>
+          <span class="pslide-tag">New causal loop · Digital version</span>
         </div>
-        <div class="slide-image-area with-caption">
-          <img class="slide-img" src="images/process/09_kaleidoscope_whiteboard.png" alt="Whiteboard mapping the kaleidoscope metaphor — child at centre, mirrors of influence placed by caregivers and algorithms, fragmented identity picked by the child, fixed mirror as solution space" style="flex: 1; min-width: 0; max-height: 82%;">
-          <div class="slide-caption-col">
-            <div>
-              <p class="caption-label">The metaphor</p>
-              <p class="caption-text">A kaleidoscope makes fragments look like a pattern. The child looks at the pattern and calls it a self. They cannot see the mirrors. They cannot see that the fragments were placed by someone else. The wholeness is optical.</p>
-            </div>
-            <div>
-              <p class="caption-label">The system in the metaphor</p>
-              <p class="caption-highlight">Beads → influences. Mirrors → those influences placed and erected by caregivers or the kids themselves. Fixed mirror → solution space. Broken mirrors → pop culture.</p>
-            </div>
-            <div>
-              <p class="caption-label">The title it produced</p>
-              <p class="caption-text"><em>"Raised in Illusion"</em> — the child sees a coherent self. The gigamap shows what assembled it.</p>
-            </div>
+        <div class="pslide-body fullbleed">
+          <div class="pslide-img-pane no-border" style="padding:1rem 2rem 1.5rem;"><img src="images/process/07_new_loop_digital.png" alt="Full digital causal loop diagram showing all actor clusters" style="border:none;"></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 8 -->
+      <div class="pslide" id="pslide-8">
+        <div class="pslide-header">
+          <div><div class="pslide-num">08 — Visual Language</div><h2 class="pslide-title">Finding the<br><em>right form.</em></h2></div>
+          <span class="pslide-tag">Metaphor exploration · Whiteboard</span>
+        </div>
+        <div class="pslide-body">
+          <div class="pslide-img-pane"><img src="images/process/08_metaphor_whiteboard.jpeg" alt="Whiteboard sketches exploring triangle icons for gigamap actors"></div>
+          <div class="pslide-caption">
+            <div><p class="cap-label">What the team explored</p><p class="cap-text">Multiple visual forms for the actor icons: hexagons, triangles, organic shapes, connected networks. Each actor needed a distinct visual identity that could work at gigamap scale.</p></div>
+            <div><p class="cap-label">The actors</p><p class="cap-text">Parents & Caregivers, Algorithm, Social Media, Games, Ed-Tech, Advertisement, School, Influencer, Long Form Content, Health, Interruptions, Peers.</p></div>
+            <div><p class="cap-label">The decision</p><p class="cap-highlight">The triangle — with unique internal patterns per actor — emerged as the form that could hold both specificity and scalability.</p></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- ═══ SLIDE 10: TRIANGLE ICONS ═══ -->
-    <div class="slide layout-full" id="slide-10">
-      <div class="slide-bg" style="background: var(--bg);"></div>
-      <div class="slide-content">
-        <div class="slide-header">
-          <div>
-            <div class="slide-num">10 — Icon System</div>
-            <h2 class="slide-title">12 actors.<br><em>12 triangles.</em></h2>
-          </div>
-          <span class="slide-tag">Actor icon design process</span>
+      <!-- SLIDE 9 -->
+      <div class="pslide" id="pslide-9">
+        <div class="pslide-header">
+          <div><div class="pslide-num">09 — Conceptual Metaphor</div><h2 class="pslide-title">Fractured into<br><em>symmetry.</em></h2></div>
+          <span class="pslide-tag">Kaleidoscope as identity formation</span>
         </div>
-        <div class="slide-multi cols-3">
-          <div class="multi-img-wrap">
-            <img src="images/process/10a_whiteboard_triangles1.jpeg" alt="First whiteboard of triangle icon sketches for gigamap actors">
-            <span class="multi-img-label">First sketches</span>
-          </div>
-          <div class="multi-img-wrap">
-            <img src="images/process/10b_whiteboard_triangles2.jpeg" alt="Second whiteboard refining triangle icons — ideation for gigamap layout">
-            <span class="multi-img-label">Layout ideation</span>
-          </div>
-          <div class="multi-img-wrap">
-            <img src="images/process/10c_whiteboard_triangles3.jpeg" alt="Third whiteboard — finalising icon shapes and gigamap structure">
-            <span class="multi-img-label">Structure decisions</span>
+        <div class="pslide-body">
+          <div class="pslide-img-pane"><img src="images/process/09_kaleidoscope_whiteboard.jpeg" alt="Whiteboard mapping the kaleidoscope metaphor — child at centre, mirrors of influence, fragmented identity"></div>
+          <div class="pslide-caption">
+            <div><p class="cap-label">The metaphor</p><p class="cap-text">A kaleidoscope makes fragments look like a pattern. The child looks at the pattern and calls it a self. They cannot see the mirrors. They cannot see that the fragments were placed by someone else. The wholeness is optical.</p></div>
+            <div><p class="cap-label">The system in the metaphor</p><p class="cap-highlight">Beads → influences. Mirrors → those influences placed by caregivers or the kids themselves. Fixed mirror → solution space. Broken mirrors → pop culture.</p></div>
+            <div><p class="cap-label">The title it produced</p><p class="cap-text"><em>"Raised in Illusion"</em> — the child sees a coherent self. The gigamap shows what assembled it.</p></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- ═══ SLIDE 11: FINAL MAP ═══ -->
-    <div class="slide layout-full slide-final" id="slide-11">
-      <div class="slide-bg" style="background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(139,92,246,0.06) 0%, transparent 70%), var(--bg);"></div>
-      <div class="slide-content">
-        <div class="slide-header">
-          <div>
-            <div class="slide-num">11 — Output</div>
-            <h2 class="slide-title">Raised in<br><em>Illusion.</em></h2>
-          </div>
-          <span class="slide-tag">Final gigamap · Figma · 2025</span>
+      <!-- SLIDE 10 — multi image -->
+      <div class="pslide" id="pslide-10">
+        <div class="pslide-header">
+          <div><div class="pslide-num">10 — Icon System</div><h2 class="pslide-title">12 actors.<br><em>12 triangles.</em></h2></div>
+          <span class="pslide-tag">Actor icon design process</span>
         </div>
-        <div class="slide-image-area" style="padding: 0.75rem 1.5rem 1.5rem;">
-          <img class="slide-img" src="images/process/11_final_map.png" alt="Final Raised in Illusion gigamap — a complete systems map of Gen Alpha identity formation in the context of digital media" style="width: 100%; height: 100%; object-fit: contain; border: none;">
+        <div class="pslide-multi cols-3">
+          <div class="multi-wrap"><img src="images/process/10a_whiteboard_triangles1.jpeg" alt="First whiteboard of triangle icon sketches"><span class="multi-label">First sketches</span></div>
+          <div class="multi-wrap"><img src="images/process/10b_whiteboard_triangles2.jpeg" alt="Second whiteboard refining triangle icons"><span class="multi-label">Layout ideation</span></div>
+          <div class="multi-wrap"><img src="images/process/10c_whiteboard_triangles3.jpeg" alt="Third whiteboard — finalising structure"><span class="multi-label">Structure decisions</span></div>
         </div>
       </div>
-    </div>
 
-  </div><!-- /track -->
-</div><!-- /viewport -->
+      <!-- SLIDE 11 — fullbleed -->
+      <div class="pslide" id="pslide-11">
+        <div class="pslide-header">
+          <div><div class="pslide-num">11 — Output</div><h2 class="pslide-title">Raised in<br><em>Illusion.</em></h2></div>
+          <span class="pslide-tag">Final gigamap · 2025</span>
+        </div>
+        <div class="pslide-body fullbleed">
+          <div class="pslide-img-pane no-border" style="padding:.75rem 1.5rem 1.5rem;"><img src="images/process/11_final_map.png" alt="Final Raised in Illusion gigamap" style="border:none;max-width:100%;max-height:100%;"></div>
+        </div>
+      </div>
+
+    </div><!-- /pTrack -->
+  </div><!-- /processSticky -->
+</div><!-- /processWrapper -->
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-title">Design Project 3 — Systems Mapping</div>
+    <div class="footer-sub">Exploring the emergence of identity of Gen Alpha in the presence of digital media</div>
+  </div>
+  <div class="footer-right">INxD · UD · Sem 4</div>
+</footer>
 
 <script>
-  // ── STATE ──────────────────────────────────────────────────────────────
-  const TOTAL = 12; // slides 0–11
-  let current = 0;
-  let isAnimating = false;
-  let scrollDelta = 0;
-  let scrollTimeout;
+// ── PART 1: fade-in observer ──────────────────────────────────────────
+const fadeObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); fadeObserver.unobserve(e.target); }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
 
-  const track    = document.getElementById('track');
-  const prevBtn  = document.getElementById('prevBtn');
-  const nextBtn  = document.getElementById('nextBtn');
-  const progress = document.getElementById('progressBar');
-  const currentNumEl = document.getElementById('currentNum');
-  const scrollHint = document.getElementById('scrollHint');
-  const dotsEl = document.getElementById('dots');
+// ── PART 2: scrollytelling ─────────────────────────────────────────────
+const TOTAL_SLIDES = 12;
+const VH_PER_SLIDE = 1.2; // scroll height per slide (in vh units × window.innerHeight)
 
-  // ── BUILD DOTS ──────────────────────────────────────────────────────────
-  for (let i = 0; i < TOTAL; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'dot' + (i === 0 ? ' active' : '');
-    dot.addEventListener('click', () => goTo(i));
-    dotsEl.appendChild(dot);
+const wrapper  = document.getElementById('processWrapper');
+const track    = document.getElementById('pTrack');
+const progressEl = document.getElementById('processProgress');
+const currentEl  = document.getElementById('pCurrent');
+const dotsEl     = document.getElementById('pDots');
+const hintEl     = document.getElementById('pHint');
+
+let pCurrent = 0;
+let isInsideProcess = false;
+
+// Set wrapper height so it provides enough scroll room
+function setWrapperHeight() {
+  wrapper.style.height = (TOTAL_SLIDES * VH_PER_SLIDE * window.innerHeight) + 'px';
+}
+setWrapperHeight();
+window.addEventListener('resize', setWrapperHeight);
+
+// Build dots
+for (let i = 0; i < TOTAL_SLIDES; i++) {
+  const d = document.createElement('div');
+  d.className = 'pdot' + (i === 0 ? ' active' : '');
+  d.addEventListener('click', () => pGoTo(i));
+  dotsEl.appendChild(d);
+}
+
+function pGoTo(index) {
+  if (index < 0 || index >= TOTAL_SLIDES) return;
+
+  // Deactivate current
+  document.getElementById(`pslide-${pCurrent}`)?.classList.remove('pactive');
+
+  pCurrent = index;
+
+  // Move track
+  track.style.transform = `translateX(-${pCurrent * 100}vw)`;
+
+  // Activate new slide after transition starts
+  setTimeout(() => {
+    document.getElementById(`pslide-${pCurrent}`)?.classList.add('pactive');
+  }, 200);
+
+  // Update dots
+  document.querySelectorAll('.pdot').forEach((d, i) => d.classList.toggle('active', i === pCurrent));
+
+  // Update counter
+  currentEl.textContent = String(pCurrent + 1).padStart(2, '0');
+
+  // Update progress (within process section)
+  progressEl.style.width = (pCurrent / (TOTAL_SLIDES - 1) * 100) + '%';
+
+  // Hide hint after first move
+  if (pCurrent > 0) hintEl.classList.add('gone');
+}
+
+// Scroll-driven navigation
+// When the wrapper is in view and we're scrolling within it, advance/retreat slides
+let lastScrollY = window.scrollY;
+let scrollAccum = 0;
+const SCROLL_THRESHOLD = 80; // px of scroll needed to advance
+
+window.addEventListener('scroll', () => {
+  const wrapperTop    = wrapper.getBoundingClientRect().top;
+  const wrapperBottom = wrapper.getBoundingClientRect().bottom;
+  const viewH = window.innerHeight;
+
+  // Are we inside the sticky zone?
+  isInsideProcess = wrapperTop <= 0 && wrapperBottom > viewH;
+
+  if (!isInsideProcess) return;
+
+  const dy = window.scrollY - lastScrollY;
+  lastScrollY = window.scrollY;
+  scrollAccum += dy;
+
+  if (scrollAccum > SCROLL_THRESHOLD) {
+    scrollAccum = 0;
+    if (pCurrent < TOTAL_SLIDES - 1) pGoTo(pCurrent + 1);
+  } else if (scrollAccum < -SCROLL_THRESHOLD) {
+    scrollAccum = 0;
+    if (pCurrent > 0) pGoTo(pCurrent - 1);
   }
+}, { passive: true });
 
-  // ── GO TO SLIDE ────────────────────────────────────────────────────────
-  function goTo(index) {
-    if (isAnimating || index < 0 || index >= TOTAL) return;
-    isAnimating = true;
-
-    // Deactivate current
-    document.getElementById(`slide-${current}`)?.classList.remove('active');
-
-    current = index;
-
-    // Move track
-    track.style.transform = `translateX(-${current * 100}vw)`;
-
-    // Activate new slide
-    setTimeout(() => {
-      document.getElementById(`slide-${current}`)?.classList.add('active');
-      isAnimating = false;
-    }, 350);
-
-    // Update UI
-    updateUI();
-  }
-
-  function goNext() { goTo(current + 1); }
-  function goPrev() { goTo(current - 1); }
-
-  function updateUI() {
-    // Progress
-    const pct = (current / (TOTAL - 1)) * 100;
-    progress.style.width = pct + '%';
-
-    // Counter
-    currentNumEl.textContent = String(current + 1).padStart(2, '0');
-
-    // Buttons
-    prevBtn.classList.toggle('hidden', current === 0);
-    nextBtn.classList.toggle('hidden', current === TOTAL - 1);
-
-    // Dots
-    document.querySelectorAll('.dot').forEach((d, i) => {
-      d.classList.toggle('active', i === current);
-    });
-
-    // Scroll hint — hide after first navigation
-    if (current > 0) {
-      scrollHint.classList.add('hidden');
+// Prevent wheel from scrolling the page while inside process section
+// and also allow caption internal scroll
+document.getElementById('processSticky').addEventListener('wheel', (e) => {
+  // If scrolling inside a caption, let it scroll internally
+  const caption = e.target.closest('.pslide-caption');
+  if (caption) {
+    const atTop = caption.scrollTop === 0 && e.deltaY < 0;
+    const atBottom = caption.scrollTop + caption.clientHeight >= caption.scrollHeight - 1 && e.deltaY > 0;
+    if (!atTop && !atBottom) {
+      e.stopPropagation();
+      return; // let caption scroll
     }
   }
-
-  // ── SCROLL ────────────────────────────────────────────────────────────
-  window.addEventListener('wheel', (e) => {
+  // Otherwise control slide navigation
+  if (isInsideProcess) {
     e.preventDefault();
-    scrollDelta += e.deltaY;
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-      if (Math.abs(scrollDelta) > 40) {
-        if (scrollDelta > 0) goNext();
-        else goPrev();
-      }
-      scrollDelta = 0;
-    }, 60);
-  }, { passive: false });
-
-  // ── KEYBOARD ──────────────────────────────────────────────────────────
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); goNext(); }
-    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); goPrev(); }
-  });
-
-  // ── BUTTONS ───────────────────────────────────────────────────────────
-  prevBtn.addEventListener('click', goPrev);
-  nextBtn.addEventListener('click', goNext);
-
-  // ── TOUCH ────────────────────────────────────────────────────────────
-  let touchStart = null;
-  window.addEventListener('touchstart', (e) => { touchStart = e.touches[0].clientX; });
-  window.addEventListener('touchend', (e) => {
-    if (touchStart === null) return;
-    const diff = touchStart - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) goNext(); else goPrev();
+    if (e.deltaY > 30) {
+      if (pCurrent < TOTAL_SLIDES - 1) pGoTo(pCurrent + 1);
+    } else if (e.deltaY < -30) {
+      if (pCurrent > 0) pGoTo(pCurrent - 1);
     }
-    touchStart = null;
-  });
-
-  // ── CURSOR ────────────────────────────────────────────────────────────
-  const cursor = document.getElementById('cursor');
-  const ring   = document.getElementById('cursorRing');
-  let rx = 0, ry = 0, cx = 0, cy = 0;
-
-  document.addEventListener('mousemove', (e) => {
-    cx = e.clientX; cy = e.clientY;
-    cursor.style.left = cx + 'px';
-    cursor.style.top  = cy + 'px';
-  });
-
-  function animateRing() {
-    rx += (cx - rx) * 0.12;
-    ry += (cy - ry) * 0.12;
-    ring.style.left = rx + 'px';
-    ring.style.top  = ry + 'px';
-    requestAnimationFrame(animateRing);
   }
-  animateRing();
+}, { passive: false });
 
-  // ── INIT ──────────────────────────────────────────────────────────────
-  updateUI();
-  document.getElementById('slide-0').classList.add('active');
+// Keyboard
+window.addEventListener('keydown', (e) => {
+  if (!isInsideProcess) return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); if (pCurrent < TOTAL_SLIDES - 1) pGoTo(pCurrent + 1); }
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); if (pCurrent > 0) pGoTo(pCurrent - 1); }
+});
+
+// Touch
+let touchStartX = null;
+document.getElementById('processSticky').addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+document.getElementById('processSticky').addEventListener('touchend', e => {
+  if (touchStartX === null) return;
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) {
+    if (diff > 0 && pCurrent < TOTAL_SLIDES - 1) pGoTo(pCurrent + 1);
+    if (diff < 0 && pCurrent > 0) pGoTo(pCurrent - 1);
+  }
+  touchStartX = null;
+});
+
+lastScrollY = window.scrollY;
 </script>
 
 </body>
